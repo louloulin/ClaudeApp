@@ -25,6 +25,7 @@ import MainContent from './components/MainContent';
 import MobileNav from './components/MobileNav';
 import ToolsSettings from './components/ToolsSettings';
 import QuickSettingsPanel from './components/QuickSettingsPanel';
+import NetworkStatus, { OfflineBanner, ServiceWorkerUpdate } from './components/NetworkStatus';
 
 import { useWebSocket } from './utils/websocket';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -629,6 +630,11 @@ function AppContent() {
 
       {/* Version Upgrade Modal */}
       <VersionUpgradeModal />
+
+      {/* PWA Components */}
+      <OfflineBanner />
+      <NetworkStatus />
+      <ServiceWorkerUpdate />
     </div>
   );
 }

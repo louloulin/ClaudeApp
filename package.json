@@ -21,7 +21,10 @@
     "build:ios": "npm run build && npx cap sync && npx cap build ios",
     "open:android": "npx cap open android",
     "open:ios": "npx cap open ios",
-    "sync": "npx cap sync"
+    "sync": "npx cap sync",
+    "config:dev": "node scripts/configure-capacitor.js development",
+    "config:test": "node scripts/configure-capacitor.js testing",
+    "config:prod": "node scripts/configure-capacitor.js production"
   },
   "keywords": [
     "claude",

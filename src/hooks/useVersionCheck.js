@@ -1,10 +1,21 @@
 // hooks/useVersionCheck.js
 import { useState, useEffect } from 'react';
-import { version } from '../../package.json';
+
+// 从环境变量或直接定义版本号
+const getCurrentVersion = () => {
+  // 尝试从环境变量获取版本
+  if (import.meta.env.VITE_APP_VERSION) {
+    return import.meta.env.VITE_APP_VERSION;
+  }
+
+  // 回退到硬编码版本
+  return '1.5.0';
+};
 
 export const useVersionCheck = (owner, repo) => {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [latestVersion, setLatestVersion] = useState(null);
+  const currentVersion = getCurrentVersion();
 
   useEffect(() => {
     const checkVersion = async () => {
@@ -16,7 +27,7 @@ export const useVersionCheck = (owner, repo) => {
         if (data.tag_name) {
           const latest = data.tag_name.replace(/^v/, '');
           setLatestVersion(latest);
-          setUpdateAvailable(version !== latest);
+          setUpdateAvailable(currentVersion !== latest);
         } else {
           // No releases found, don't show update notification
           setUpdateAvailable(false);
@@ -35,5 +46,5 @@ export const useVersionCheck = (owner, repo) => {
     return () => clearInterval(interval);
   }, [owner, repo]);
 
-  return { updateAvailable, latestVersion, currentVersion: version };
+  return { updateAvailable, latestVersion, currentVersion };
 }; 

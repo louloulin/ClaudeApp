@@ -1,10 +1,6 @@
 {
   "appId": "com.claudecode.app",
-  "appName": "Claude Code UI",
   "webDir": "dist",
-  "server": {
-    "androidScheme": "https"
-  },
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 2000,
@@ -29,5 +25,15 @@
     "Filesystem": {
       "enabled": true
     }
+  },
+  "appName": "Claude Code UI (Dev)",
+  "server": {
+    "url": "http://localhost:3008",
+    "cleartext": true,
+    "androidScheme": "http",
+    "allowNavigation": [
+      "localhost:*",
+      "127.0.0.1:*"
+    ]
   }
 }

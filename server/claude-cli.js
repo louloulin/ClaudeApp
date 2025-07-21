@@ -2,14 +2,38 @@ import { spawn } from 'child_process';
 import { promises as fs } from 'fs';
 import path from 'path';
 import os from 'os';
+import resourceMonitor from './resource-monitor.js';
+import claudeInstancePool from './claude-pool.js';
 
 let activeClaudeProcesses = new Map(); // Track active processes by session ID
 
 async function spawnClaude(command, options = {}, ws) {
   return new Promise(async (resolve, reject) => {
-    const { sessionId, projectPath, cwd, resume, toolsSettings, permissionMode, images } = options;
+    const { sessionId, cwd, resume, toolsSettings, permissionMode, images, userId } = options;
     let capturedSessionId = sessionId; // Track session ID throughout the process
     let sessionCreatedSent = false; // Track if we've already sent session-created event
+
+    // Get or create Claude instance for the user
+    let userInstance = null;
+    let userWorkspace = null;
+
+    if (userId) {
+      try {
+        userInstance = await claudeInstancePool.getOrCreateInstance(userId);
+        userWorkspace = userInstance.workspace;
+        console.log(`🎯 Using Claude instance ${userInstance.id} for user ${userId}`);
+      } catch (error) {
+        console.error(`❌ Failed to get Claude instance for user ${userId}:`, error);
+        if (ws) {
+          ws.send(JSON.stringify({
+            type: 'error',
+            error: `Failed to create Claude instance: ${error.message}`
+          }));
+        }
+        reject(error);
+        return;
+      }
+    }
     
     // Use tools settings passed from frontend, or defaults
     const settings = toolsSettings || {
@@ -240,6 +264,11 @@ async function spawnClaude(command, options = {}, ws) {
     // Store process reference for potential abort
     const processKey = capturedSessionId || sessionId || Date.now().toString();
     activeClaudeProcesses.set(processKey, claudeProcess);
+
+    // Register process with resource monitor if userId is provided
+    if (userId) {
+      resourceMonitor.registerUserProcess(userId, claudeProcess.pid, 'claude');
+    }
     
     // Handle stdout (streaming JSON responses)
     claudeProcess.stdout.on('data', (data) => {
@@ -306,6 +335,11 @@ async function spawnClaude(command, options = {}, ws) {
       // Clean up process reference
       const finalSessionId = capturedSessionId || sessionId || processKey;
       activeClaudeProcesses.delete(finalSessionId);
+
+      // Unregister from resource monitor
+      if (userId) {
+        resourceMonitor.unregisterUserProcess(userId, claudeProcess.pid);
+      }
       
       ws.send(JSON.stringify({
         type: 'claude-complete',

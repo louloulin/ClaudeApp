@@ -101,10 +101,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (username, password) => {
+  const register = async (username, password, email = null) => {
     try {
       setError(null);
-      const response = await api.auth.register(username, password);
+      const response = await api.auth.register(username, password, email);
 
       const data = await response.json();
 
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }) => {
         setUser(data.user);
         setNeedsSetup(false);
         localStorage.setItem('auth-token', data.token);
-        return { success: true };
+        return { success: true, message: data.message };
       } else {
         setError(data.error || 'Registration failed');
         return { success: false, error: data.error || 'Registration failed' };

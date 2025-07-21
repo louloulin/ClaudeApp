@@ -43,6 +43,8 @@ import authRoutes from './routes/auth.js';
 import mcpRoutes from './routes/mcp.js';
 import { initializeDatabase } from './database/db.js';
 import { validateApiKey, authenticateToken, authenticateWebSocket } from './middleware/auth.js';
+import resourceMonitor from './resource-monitor.js';
+import claudeInstancePool from './claude-pool.js';
 
 // File system watcher for projects folder
 let projectsWatcher = null;
@@ -429,15 +431,15 @@ app.get('/api/projects/:projectName/files', authenticateToken, async (req, res) 
 wss.on('connection', (ws, request) => {
   const url = request.url;
   console.log('🔗 Client connected to:', url);
-  
+
   // Parse URL to get pathname without query parameters
   const urlObj = new URL(url, 'http://localhost');
   const pathname = urlObj.pathname;
-  
+
   if (pathname === '/shell') {
-    handleShellConnection(ws);
+    handleShellConnection(ws, request);
   } else if (pathname === '/ws') {
-    handleChatConnection(ws);
+    handleChatConnection(ws, request);
   } else {
     console.log('❌ Unknown WebSocket path:', pathname);
     ws.close();
@@ -445,23 +447,31 @@ wss.on('connection', (ws, request) => {
 });
 
 // Handle chat WebSocket connections
-function handleChatConnection(ws) {
-  console.log('💬 Chat WebSocket connected');
-  
+function handleChatConnection(ws, request) {
+  const user = request.user; // User info from WebSocket authentication
+  console.log(`💬 Chat WebSocket connected for user: ${user.username} (ID: ${user.userId})`);
+
   // Add to connected clients for project updates
   connectedClients.add(ws);
-  
+
   ws.on('message', async (message) => {
     try {
       const data = JSON.parse(message);
-      
+
       if (data.type === 'claude-command') {
-        console.log('💬 User message:', data.command || '[Continue/Resume]');
+        console.log(`💬 User ${user.username} message:`, data.command || '[Continue/Resume]');
         console.log('📁 Project:', data.options?.projectPath || 'Unknown');
         console.log('🔄 Session:', data.options?.sessionId ? 'Resume' : 'New');
-        await spawnClaude(data.command, data.options, ws);
+
+        // Add user ID to options for multi-tenant support
+        const options = {
+          ...data.options,
+          userId: user.userId
+        };
+
+        await spawnClaude(data.command, options, ws);
       } else if (data.type === 'abort-session') {
-        console.log('🛑 Abort session request:', data.sessionId);
+        console.log(`🛑 User ${user.username} abort session request:`, data.sessionId);
         const success = abortClaudeSession(data.sessionId);
         ws.send(JSON.stringify({
           type: 'session-aborted',
@@ -470,24 +480,25 @@ function handleChatConnection(ws) {
         }));
       }
     } catch (error) {
-      console.error('❌ Chat WebSocket error:', error.message);
+      console.error(`❌ Chat WebSocket error for user ${user.username}:`, error.message);
       ws.send(JSON.stringify({
         type: 'error',
         error: error.message
       }));
     }
   });
-  
+
   ws.on('close', () => {
-    console.log('🔌 Chat client disconnected');
+    console.log(`🔌 Chat client disconnected for user: ${user.username}`);
     // Remove from connected clients
     connectedClients.delete(ws);
   });
 }
 
 // Handle shell WebSocket connections
-function handleShellConnection(ws) {
-  console.log('🐚 Shell client connected');
+function handleShellConnection(ws, request) {
+  const user = request.user; // User info from WebSocket authentication
+  console.log(`🐚 Shell client connected for user: ${user.username} (ID: ${user.userId})`);
   let shellProcess = null;
   
   ws.on('message', async (message) => {
@@ -496,12 +507,18 @@ function handleShellConnection(ws) {
       console.log('📨 Shell message received:', data.type);
       
       if (data.type === 'init') {
-        // Initialize shell with project path and session info
-        const projectPath = data.projectPath || process.cwd();
+        // Get user's workspace and initialize shell
+        const userInstance = await claudeInstancePool.getOrCreateInstance(user.userId);
+        const userWorkspace = userInstance.workspace;
+
+        // Use project path relative to user workspace, or default to user workspace
+        const projectPath = data.projectPath ?
+          path.resolve(userWorkspace, data.projectPath) :
+          userWorkspace;
         const sessionId = data.sessionId;
         const hasSession = data.hasSession;
-        
-        console.log('🚀 Starting shell in:', projectPath);
+
+        console.log(`🚀 Starting shell for user ${user.username} in:`, projectPath);
         console.log('📋 Session info:', hasSession ? `Resume session ${sessionId}` : 'New session');
         
         // First send a welcome message
@@ -642,15 +659,15 @@ function handleShellConnection(ws) {
   });
   
   ws.on('close', () => {
-    console.log('🔌 Shell client disconnected');
+    console.log(`🔌 Shell client disconnected for user: ${user.username}`);
     if (shellProcess && shellProcess.kill) {
-      console.log('🔴 Killing shell process:', shellProcess.pid);
+      console.log(`🔴 Killing shell process ${shellProcess.pid} for user ${user.username}`);
       shellProcess.kill();
     }
   });
-  
+
   ws.on('error', (error) => {
-    console.error('❌ Shell WebSocket error:', error);
+    console.error(`❌ Shell WebSocket error for user ${user.username}:`, error);
   });
 }
 // Audio transcription endpoint
@@ -980,13 +997,20 @@ async function startServer() {
   try {
     // Initialize authentication database
     await initializeDatabase();
-    console.log('✅ Database initialization skipped (testing)');
-    
+    console.log('✅ Database initialized successfully');
+
+    // Initialize Claude instance pool
+    await claudeInstancePool.initialize();
+    console.log('✅ Claude instance pool initialized');
+
     server.listen(PORT, '0.0.0.0', async () => {
       console.log(`Claude Code UI server running on http://0.0.0.0:${PORT}`);
-      
+
       // Start watching the projects folder for changes
       await setupProjectsWatcher(); // Re-enabled with better-sqlite3
+
+      // Start resource monitoring
+      resourceMonitor.start();
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

@@ -1,0 +1,275 @@
+/* 桌面PWA优化样式 */
+
+/* 检测PWA安装状态 */
+@media (display-mode: standalone) {
+  /* PWA已安装时的样式 */
+  body {
+    --pwa-installed: true;
+  }
+  
+  /* 隐藏浏览器相关的UI元素 */
+  .browser-only {
+    display: none !important;
+  }
+  
+  /* 调整顶部间距，因为没有浏览器地址栏 */
+  .app-container {
+    padding-top: 0;
+  }
+  
+  /* 桌面应用的标题栏样式 */
+  .desktop-titlebar {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    background: var(--bg-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 16px;
+    -webkit-app-region: drag;
+    user-select: none;
+  }
+  
+  .desktop-titlebar .title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+  
+  .desktop-titlebar .controls {
+    margin-left: auto;
+    -webkit-app-region: no-drag;
+  }
+}
+
+/* 窗口控制覆盖模式 (Windows 11) */
+@media (display-mode: window-controls-overlay) {
+  .app-header {
+    padding-left: env(titlebar-area-x, 0);
+    padding-right: env(titlebar-area-width, 100%);
+    padding-top: env(titlebar-area-y, 0);
+    height: env(titlebar-area-height, 32px);
+    -webkit-app-region: drag;
+  }
+  
+  .app-header .interactive-elements {
+    -webkit-app-region: no-drag;
+  }
+}
+
+/* 桌面特定的布局优化 */
+@media (min-width: 1024px) and (display-mode: standalone) {
+  /* 桌面应用的最小尺寸 */
+  .app-container {
+    min-width: 800px;
+    min-height: 600px;
+  }
+  
+  /* 优化侧边栏在桌面上的显示 */
+  .sidebar {
+    width: 280px;
+    border-right: 1px solid var(--border-color);
+  }
+  
+  /* 主内容区域调整 */
+  .main-content {
+    margin-left: 280px;
+  }
+  
+  /* 终端和编辑器的桌面优化 */
+  .terminal-container,
+  .editor-container {
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  /* 代码高亮优化 */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+  }
+  
+  /* 滚动条样式 */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+}
+
+/* 桌面快捷键提示 */
+.desktop-shortcuts {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.desktop-shortcuts.show {
+  opacity: 1;
+}
+
+.desktop-shortcuts .shortcut {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.desktop-shortcuts .shortcut:last-child {
+  margin-bottom: 0;
+}
+
+.desktop-shortcuts .key {
+  font-family: monospace;
+  background: var(--key-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+/* 文件拖拽区域 */
+.file-drop-zone {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(59, 130, 246, 0.1);
+  border: 2px dashed #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.file-drop-zone.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.file-drop-zone .drop-message {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: #3b82f6;
+}
+
+/* 桌面通知样式 */
+.desktop-notification {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  max-width: 320px;
+  z-index: 1001;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.desktop-notification.show {
+  transform: translateX(0);
+}
+
+.desktop-notification .notification-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.desktop-notification .notification-title {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.desktop-notification .notification-body {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* 响应式调整 */
+@media (max-width: 1023px) {
+  /* 在小屏幕上隐藏桌面特定元素 */
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #1f2937;
+    --bg-secondary: #374151;
+    --text-color: #f9fafb;
+    --text-secondary: #d1d5db;
+    --border-color: #4b5563;
+    --code-bg: #111827;
+    --scrollbar-track: #374151;
+    --scrollbar-thumb: #6b7280;
+    --scrollbar-thumb-hover: #9ca3af;
+    --key-bg: #4b5563;
+  }
+}
+
+/* 浅色模式 */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-color: #ffffff;
+    --bg-secondary: #f9fafb;
+    --text-color: #111827;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+    --code-bg: #f8fafc;
+    --scrollbar-track: #f1f5f9;
+    --scrollbar-thumb: #cbd5e1;
+    --scrollbar-thumb-hover: #94a3b8;
+    --key-bg: #e5e7eb;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .desktop-titlebar,
+  .desktop-shortcuts,
+  .desktop-notification,
+  .file-drop-zone {
+    display: none !important;
+  }
+}

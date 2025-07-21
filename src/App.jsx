@@ -26,6 +26,8 @@ import MobileNav from './components/MobileNav';
 import ToolsSettings from './components/ToolsSettings';
 import QuickSettingsPanel from './components/QuickSettingsPanel';
 import NetworkStatus, { OfflineBanner, ServiceWorkerUpdate } from './components/NetworkStatus';
+import DesktopInstallPrompt from './components/DesktopInstallPrompt';
+import DesktopEnhancements from './components/DesktopEnhancements';
 
 import { useWebSocket } from './utils/websocket';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -635,6 +637,10 @@ function AppContent() {
       <OfflineBanner />
       <NetworkStatus />
       <ServiceWorkerUpdate />
+
+      {/* Desktop PWA Components */}
+      <DesktopInstallPrompt />
+      <DesktopEnhancements />
     </div>
   );
 }

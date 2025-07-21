@@ -45,5 +45,54 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+
+	<!-- Privacy Permissions -->
+	<key>NSCameraUsageDescription</key>
+	<string>This app uses the camera to capture photos and videos for code documentation.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app uses the microphone to record audio for voice commands.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app accesses the photo library to save and share code screenshots.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app uses location to provide context-aware coding assistance.</string>
+
+	<!-- App Transport Security -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+
+	<!-- Background Modes -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>background-processing</string>
+		<string>background-fetch</string>
+	</array>
+
+	<!-- Status Bar Style -->
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleDefault</string>
+
+	<!-- Launch Screen -->
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchScreenBackground</string>
+		<key>UIImageName</key>
+		<string>LaunchScreenLogo</string>
+	</dict>
+
+	<!-- File Sharing -->
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+
+	<!-- Keyboard -->
+	<key>UIRequiresFullScreen</key>
+	<false/>
 </dict>
 </plist>

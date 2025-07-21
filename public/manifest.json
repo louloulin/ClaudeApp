@@ -89,5 +89,29 @@
       ]
     }
   ],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "text/plain": [".txt", ".md", ".js", ".jsx", ".ts", ".tsx", ".css", ".html", ".json"],
+        "text/javascript": [".js", ".jsx"],
+        "text/typescript": [".ts", ".tsx"],
+        "application/json": [".json"]
+      }
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+claudecode",
+      "url": "/?protocol=%s"
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
 }

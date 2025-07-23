@@ -34,6 +34,9 @@ USER root
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs dumb-init
 
+# Install Claude CLI globally (same as claudebox)
+RUN npm install -g @anthropic-ai/claude-code
+
 # Create app directory and user (if not exists)
 RUN id -u claudeui >/dev/null 2>&1 || useradd -m -s /bin/bash -u 1001 claudeui
 
@@ -48,6 +51,9 @@ RUN npm ci --only=production && npm cache clean --force
 
 # Copy server code
 COPY server/ ./server/
+
+# Copy scripts
+COPY scripts/ ./scripts/
 
 # Copy built frontend from previous stage
 COPY --from=frontend-builder /app/dist ./dist

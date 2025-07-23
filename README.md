@@ -76,7 +76,7 @@ npm run dev
 The application will start at the port you specified in your .env
 
 5. **Open your browser:**
-   - Development: `http://localhost:3001`
+   - Development: `http://localhost:3008` (or your configured port)
 
 ## Security & Tools Configuration
 
@@ -191,6 +191,58 @@ We welcome contributions! Please follow these guidelines:
 - **Documentation** - Improve guides and API docs
 - **UI/UX improvements** - Better user experience
 - **Performance optimizations** - Make it faster
+
+## 🚀 Deployment
+
+### Docker Deployment (Recommended)
+
+```bash
+# Quick start with Docker
+npm run docker:build
+npm run docker:run
+
+# Check status
+npm run deploy:status
+
+# View logs
+npm run docker:logs
+```
+
+### Production Deployment
+
+```bash
+# Build for production
+npm run config:prod
+npm run build
+
+# Deploy to production
+npm run deploy:prod
+```
+
+### Mobile App Deployment
+
+```bash
+# Build mobile applications
+npm run deploy:mobile
+
+# Build specific platforms
+npm run build:android
+npm run build:ios
+```
+
+### Release Management
+
+```bash
+# Create a new release
+npm run release:patch    # Bug fixes
+npm run release:minor    # New features
+npm run release:major    # Breaking changes
+
+# Preview release changes
+npm run release:dry
+```
+
+For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Troubleshooting
 

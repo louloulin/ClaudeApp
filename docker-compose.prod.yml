@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  claude-code-ui:
+    image: claude-code-ui:latest
+    container_name: claude-code-ui-prod
+    ports:
+      - "3008:3008"
+    environment:
+      - NODE_ENV=production
+      - PORT=3008
+      - VITE_ENVIRONMENT=production
+      - VITE_API_BASE_URL=${API_BASE_URL:-https://api.claudecode.app}
+      - VITE_WS_BASE_URL=${WS_BASE_URL:-wss://api.claudecode.app}
+    volumes:
+      - claude_data_prod:/app/data
+      - ~/.claude:/home/claudeui/.claude:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3008/api/config', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - claude-prod-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  nginx:
+    image: nginx:alpine
+    container_name: claude-nginx-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - claude-code-ui
+    restart: unless-stopped
+    networks:
+      - claude-prod-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Optional: Monitoring with Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: claude-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - claude-prod-network
+    profiles:
+      - monitoring
+
+volumes:
+  claude_data_prod:
+    driver: local
+  prometheus_data:
+    driver: local
+
+networks:
+  claude-prod-network:
+    driver: bridge

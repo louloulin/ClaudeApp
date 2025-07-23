@@ -218,6 +218,19 @@ async function spawnClaude(command, options = {}, ws) {
       }
     }
     
+    // Prepare environment variables for Claude CLI
+    const claudeEnv = {
+      ...process.env,
+      // Ensure Anthropic API configuration is passed to Claude CLI
+      ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY,
+      ANTHROPIC_BASE_URL: process.env.ANTHROPIC_BASE_URL,
+    };
+
+    // Log environment configuration for debugging
+    console.log('🔧 Claude CLI Environment Configuration:');
+    console.log('   ANTHROPIC_BASE_URL:', claudeEnv.ANTHROPIC_BASE_URL || 'not set');
+    console.log('   ANTHROPIC_API_KEY:', claudeEnv.ANTHROPIC_API_KEY ? 'set (****)' : 'not set');
+
     console.log('Spawning Claude CLI:', 'claude', args.map(arg => {
       const cleanArg = arg.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
       return cleanArg.includes(' ') ? `"${cleanArg}"` : cleanArg;
@@ -226,11 +239,11 @@ async function spawnClaude(command, options = {}, ws) {
     console.log('Session info - Input sessionId:', sessionId, 'Resume:', resume);
     console.log('🔍 Full command args:', JSON.stringify(args, null, 2));
     console.log('🔍 Final Claude command will be: claude ' + args.join(' '));
-    
+
     const claudeProcess = spawn('claude', args, {
       cwd: workingDir,
       stdio: ['pipe', 'pipe', 'pipe'],
-      env: { ...process.env } // Inherit all environment variables
+      env: claudeEnv
     });
     
     // Attach temp file info to process for cleanup later

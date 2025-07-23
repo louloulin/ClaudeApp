@@ -60,7 +60,10 @@ COPY --from=frontend-builder /app/dist ./dist
 
 # Create necessary directories and set permissions
 RUN mkdir -p /app/data && \
-    chown -R claudeui:claudeui /app
+    mkdir -p /home/claudeui/.claude/projects && \
+    mkdir -p /home/claudeui/Documents && \
+    chown -R claudeui:claudeui /app && \
+    chown -R claudeui:claudeui /home/claudeui
 # Set environment variables for claudebox compatibility
 ENV CLAUDEBOX_PROJECT_NAME=claude-code-ui
 ENV DEVCONTAINER=true
@@ -76,7 +79,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3008/api/config', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
 # Override the claudebox entrypoint with our own
-ENTRYPOINT []
+ENTRYPOINT ["/app/scripts/docker-entrypoint.sh"]
 
 # Use dumb-init to handle signals properly and start the application
 CMD ["dumb-init", "node", "server/index.js"]

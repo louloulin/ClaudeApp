@@ -15,7 +15,7 @@ async function getActualProjectPath(projectName) {
   } catch (error) {
     console.error(`Error extracting project directory for ${projectName}:`, error);
     // Fallback to the old method
-    return projectName.replace(/-/g, '/');
+    return '/' + projectName.replace(/-/g, '/');
   }
 }
 

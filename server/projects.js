@@ -15,8 +15,13 @@ function clearProjectDirectoryCache() {
 
 // Load project configuration file
 async function loadProjectConfig() {
-  const configPath = path.join(process.env.HOME, '.claude', 'project-config.json');
+  const claudeDir = path.join(process.env.HOME, '.claude');
+  const configPath = path.join(claudeDir, 'project-config.json');
+
   try {
+    // Ensure .claude directory exists
+    await fs.mkdir(claudeDir, { recursive: true });
+
     const configData = await fs.readFile(configPath, 'utf8');
     return JSON.parse(configData);
   } catch (error) {
@@ -27,14 +32,19 @@ async function loadProjectConfig() {
 
 // Save project configuration file
 async function saveProjectConfig(config) {
-  const configPath = path.join(process.env.HOME, '.claude', 'project-config.json');
+  const claudeDir = path.join(process.env.HOME, '.claude');
+  const configPath = path.join(claudeDir, 'project-config.json');
+
+  // Ensure .claude directory exists
+  await fs.mkdir(claudeDir, { recursive: true });
+
   await fs.writeFile(configPath, JSON.stringify(config, null, 2), 'utf8');
 }
 
 // Generate better display name from path
 async function generateDisplayName(projectName, actualProjectDir = null) {
   // Use actual project directory if provided, otherwise decode from project name
-  let projectPath = actualProjectDir || projectName.replace(/-/g, '/');
+  let projectPath = actualProjectDir || ('/' + projectName.replace(/-/g, '/'));
   
   // Try to read package.json from the project path
   try {
@@ -122,7 +132,7 @@ async function extractProjectDirectory(projectName) {
       // Determine the best cwd to use
       if (cwdCounts.size === 0) {
         // No cwd found, fall back to decoded project name
-        extractedPath = projectName.replace(/-/g, '/');
+        extractedPath = '/' + projectName.replace(/-/g, '/');
       } else if (cwdCounts.size === 1) {
         // Only one cwd, use it
         extractedPath = Array.from(cwdCounts.keys())[0];
@@ -146,7 +156,7 @@ async function extractProjectDirectory(projectName) {
         
         // Fallback (shouldn't reach here)
         if (!extractedPath) {
-          extractedPath = latestCwd || projectName.replace(/-/g, '/');
+          extractedPath = latestCwd || ('/' + projectName.replace(/-/g, '/'));
         }
       }
     }
@@ -159,7 +169,7 @@ async function extractProjectDirectory(projectName) {
   } catch (error) {
     console.error(`Error extracting project directory for ${projectName}:`, error);
     // Fall back to decoded project name
-    extractedPath = projectName.replace(/-/g, '/');
+    extractedPath = '/' + projectName.replace(/-/g, '/');
     
     // Cache the fallback result too
     projectDirectoryCache.set(projectName, extractedPath);
@@ -175,6 +185,9 @@ async function getProjects() {
   const existingProjects = new Set();
   
   try {
+    // Ensure projects directory exists
+    await fs.mkdir(claudeDir, { recursive: true });
+
     // First, get existing projects from the file system
     const entries = await fs.readdir(claudeDir, { withFileTypes: true });
     
@@ -547,16 +560,24 @@ async function deleteProject(projectName) {
 // Add a project manually to the config (without creating folders)
 async function addProjectManually(projectPath, displayName = null) {
   const absolutePath = path.resolve(projectPath);
-  
+
   try {
-    // Check if the path exists
+    // Check if the path exists, if not try to create it for container environments
     await fs.access(absolutePath);
   } catch (error) {
-    throw new Error(`Path does not exist: ${absolutePath}`);
+    // In container environments, try to create the directory if it doesn't exist
+    try {
+      await fs.mkdir(absolutePath, { recursive: true });
+      console.log(`Created project directory: ${absolutePath}`);
+    } catch (createError) {
+      throw new Error(`Path does not exist and cannot be created: ${absolutePath} (${createError.message})`);
+    }
   }
   
   // Generate project name (encode path for use as directory name)
-  const projectName = absolutePath.replace(/\//g, '-');
+  // Remove leading slash to avoid starting with dash
+  const cleanPath = absolutePath.startsWith('/') ? absolutePath.substring(1) : absolutePath;
+  const projectName = cleanPath.replace(/\//g, '-');
   
   // Check if project already exists in config or as a folder
   const config = await loadProjectConfig();

@@ -1,14 +1,45 @@
 version: '3.8'
 
 services:
-  claude-code:
+  claude-code-ui:
     image: claude-code-ui:latest
     container_name: claude-code-ui
     ports:
-      - "3008:3008"
+      - "${PORT:-3008}:${PORT:-3008}"
     environment:
-      - NODE_ENV=production
-      - PORT=3008
+      # Server Configuration
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=${PORT:-3008}
+
+      # Anthropic API Configuration
+      - ANTHROPIC_BASE_URL=${ANTHROPIC_BASE_URL:-https://api.anthropic.com}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+
+      # Claude CLI Configuration
+      - CLAUDE_API_KEY=${ANTHROPIC_API_KEY}
+      - CLAUDE_MODEL=${CLAUDE_MODEL:-sonnet}
+
+      # Security Configuration
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key-change-in-production}
+      - SESSION_TIMEOUT=${SESSION_TIMEOUT:-24h}
+
+      # Project Configuration
+      - DEFAULT_PROJECT_PATH=${DEFAULT_PROJECT_PATH:-/workspace}
+      - AUTO_CREATE_PROJECTS=${AUTO_CREATE_PROJECTS:-true}
+
+      # Logging Configuration
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_FORMAT=${LOG_FORMAT:-json}
+
+    volumes:
+      # Persistent data storage
+      - claude_data:/app/data
+      # Claude CLI configuration and sessions
+      - claude_sessions:/home/claudeui/.claude
+      # Project workspace (customize as needed)
+      - ${WORKSPACE_PATH:-./workspace}:/workspace
+      # Optional: Mount your projects directory
+      - ${PROJECTS_PATH:-~/Documents}:/home/claudeui/Documents
 
     restart: unless-stopped
     healthcheck:
@@ -40,6 +71,8 @@ services:
 
 volumes:
   claude_data:
+    driver: local
+  claude_sessions:
     driver: local
 
 networks:

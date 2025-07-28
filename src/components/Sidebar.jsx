@@ -3,8 +3,10 @@ import { ScrollArea } from './ui/scroll-area';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Input } from './ui/input';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
-import { FolderOpen, Folder, Plus, MessageSquare, Clock, ChevronDown, ChevronRight, Edit3, Check, X, Trash2, Settings, FolderPlus, RefreshCw, Sparkles, Edit2, Star, Search } from 'lucide-react';
+import { FolderOpen, Folder, Plus, MessageSquare, Clock, ChevronDown, ChevronRight, Edit3, Check, X, Trash2, Settings, FolderPlus, RefreshCw, Sparkles, Edit2, Star, Search, Shield } from 'lucide-react';
 import { cn } from '../lib/utils';
 import ClaudeLogo from './ClaudeLogo';
 import { api } from '../utils/api';
@@ -52,6 +54,8 @@ function Sidebar({
   currentVersion,
   onShowVersionModal
 }) {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [expandedProjects, setExpandedProjects] = useState(new Set());
   const [editingProject, setEditingProject] = useState(null);
   const [showNewProject, setShowNewProject] = useState(false);
@@ -429,6 +433,17 @@ function Sidebar({
             </div>
           </div>
           <div className="flex gap-2">
+            {user?.role === 'admin' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-9 w-9 px-0 hover:bg-accent transition-colors duration-200 group"
+                onClick={() => navigate('/admin')}
+                title="Admin Panel"
+              >
+                <Shield className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="sm"
@@ -471,6 +486,15 @@ function Sidebar({
               </div>
             </div>
             <div className="flex gap-2">
+              {user?.role === 'admin' && (
+                <button
+                  className="w-8 h-8 rounded-md bg-orange-500/10 border border-orange-200 dark:border-orange-800 flex items-center justify-center active:scale-95 transition-all duration-150"
+                  onClick={() => navigate('/admin')}
+                  title="Admin Panel"
+                >
+                  <Shield className="w-4 h-4 text-orange-600 dark:text-orange-400" />
+                </button>
+              )}
               <button
                 className="w-8 h-8 rounded-md bg-background border border-border flex items-center justify-center active:scale-95 transition-all duration-150"
                 onClick={async () => {

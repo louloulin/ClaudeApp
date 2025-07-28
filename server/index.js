@@ -41,6 +41,7 @@ import { spawnClaude, abortClaudeSession } from './claude-cli.js';
 import gitRoutes from './routes/git.js';
 import authRoutes from './routes/auth.js';
 import mcpRoutes from './routes/mcp.js';
+import adminRoutes from './routes/admin.js';
 import { initializeDatabase } from './database/db.js';
 import { validateApiKey, authenticateToken, authenticateWebSocket } from './middleware/auth.js';
 import resourceMonitor from './resource-monitor.js';
@@ -176,6 +177,9 @@ app.use('/api/git', authenticateToken, gitRoutes);
 
 // MCP API Routes (protected)
 app.use('/api/mcp', authenticateToken, mcpRoutes);
+
+// Admin API Routes (protected)
+app.use('/api/admin', authenticateToken, adminRoutes);
 
 // Devbox API Routes (protected)
 import devboxRoutes from './routes/devbox.js';

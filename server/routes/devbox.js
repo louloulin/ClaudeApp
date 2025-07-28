@@ -5,7 +5,7 @@
 
 import express from 'express';
 import devboxIntegration from '../devbox/index.js';
-import { authenticateToken, requireRole } from '../middleware/auth.js';
+import { authenticateToken, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -270,7 +270,7 @@ router.get('/templates', async (req, res) => {
  * 获取系统统计信息（管理员）
  * GET /api/devbox/admin/stats
  */
-router.get('/admin/stats', requireRole('admin'), async (req, res) => {
+router.get('/admin/stats', requireAdmin, async (req, res) => {
   try {
     const stats = await devboxIntegration.getSystemStats();
     
@@ -291,7 +291,7 @@ router.get('/admin/stats', requireRole('admin'), async (req, res) => {
  * 清理用户所有环境（管理员）
  * DELETE /api/devbox/admin/users/:userId/environments
  */
-router.delete('/admin/users/:userId/environments', requireRole('admin'), async (req, res) => {
+router.delete('/admin/users/:userId/environments', requireAdmin, async (req, res) => {
   try {
     const { userId } = req.params;
     
@@ -314,7 +314,7 @@ router.delete('/admin/users/:userId/environments', requireRole('admin'), async (
  * 获取所有用户环境列表（管理员）
  * GET /api/devbox/admin/environments
  */
-router.get('/admin/environments', requireRole('admin'), async (req, res) => {
+router.get('/admin/environments', requireAdmin, async (req, res) => {
   try {
     const stats = await devboxIntegration.getSystemStats();
     

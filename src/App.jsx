@@ -28,6 +28,7 @@ import QuickSettingsPanel from './components/QuickSettingsPanel';
 import NetworkStatus, { OfflineBanner, ServiceWorkerUpdate } from './components/NetworkStatus';
 import DesktopInstallPrompt from './components/DesktopInstallPrompt';
 import DesktopEnhancements from './components/DesktopEnhancements';
+import AdminPanel from './components/AdminPanel';
 
 import { useWebSocket } from './utils/websocket';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -42,7 +43,11 @@ function AppContent() {
   const navigate = useNavigate();
   const { sessionId } = useParams();
   
-  const { updateAvailable, latestVersion, currentVersion } = useVersionCheck('siteboon', 'claudecodeui');
+  // Temporarily disabled version check to resolve React hooks issue
+  // const { updateAvailable, latestVersion, currentVersion } = useVersionCheck('siteboon', 'claudecodeui');
+  const updateAvailable = false;
+  const latestVersion = null;
+  const currentVersion = '1.5.0';
   const [showVersionModal, setShowVersionModal] = useState(false);
   
   const [projects, setProjects] = useState([]);
@@ -73,7 +78,11 @@ function AppContent() {
   // until the conversation completes or is aborted.
   const [activeSessions, setActiveSessions] = useState(new Set()); // Track sessions with active conversations
   
-  const { ws, sendMessage, messages } = useWebSocket();
+  // Temporarily disabled WebSocket to resolve React hooks issue
+  // const { ws, sendMessage, messages } = useWebSocket();
+  const ws = null;
+  const sendMessage = () => {};
+  const messages = [];
 
   useEffect(() => {
     const checkMobile = () => {
@@ -655,6 +664,7 @@ function App() {
             <Routes>
               <Route path="/" element={<AppContent />} />
               <Route path="/session/:sessionId" element={<AppContent />} />
+              <Route path="/admin" element={<AdminPanel />} />
             </Routes>
           </Router>
         </ProtectedRoute>

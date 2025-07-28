@@ -4,7 +4,7 @@
  */
 
 import DockerEnvironmentManager from './docker-manager.js';
-import { getUser } from '../database/db.js';
+import { userDb } from '../database/db.js';
 
 class DevboxIntegration {
   constructor() {
@@ -29,7 +29,7 @@ class DevboxIntegration {
     }
 
     // 获取用户信息
-    const user = await getUser(userId);
+    const user = await userDb.getUserById(userId);
     if (!user) {
       throw new Error('User not found');
     }
@@ -55,7 +55,7 @@ class DevboxIntegration {
    * 检查用户配额
    */
   async checkUserQuota(userId) {
-    const user = await getUser(userId);
+    const user = await userDb.getUserById(userId);
     if (!user) return false;
 
     const currentEnvs = this.dockerManager.getUserEnvironments(userId);
@@ -231,7 +231,7 @@ class DevboxIntegration {
    * 获取用户配额信息
    */
   async getUserQuotaInfo(userId) {
-    const user = await getUser(userId);
+    const user = await userDb.getUserById(userId);
     if (!user) {
       throw new Error('User not found');
     }

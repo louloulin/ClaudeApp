@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { userDb } from '../database/db.js';
+import { userDb, resourceDb } from '../database/db.js';
 
 // Get JWT secret from environment or use default (for development)
 const JWT_SECRET = process.env.JWT_SECRET || 'claude-ui-dev-secret-change-in-production';
@@ -18,7 +18,7 @@ const validateApiKey = (req, res, next) => {
   next();
 };
 
-// JWT authentication middleware
+// JWT authentication middleware with resource quota checking
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
@@ -29,19 +29,95 @@ const authenticateToken = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    
+
     // Verify user still exists and is active
     const user = userDb.getUserById(decoded.userId);
     if (!user) {
       return res.status(401).json({ error: 'Invalid token. User not found.' });
     }
-    
-    req.user = user;
+
+    // Get user resource usage and quota information
+    const resourceUsage = resourceDb.getUserResourceUsage(user.id);
+    const quotaCheck = resourceDb.checkUserQuotas(user.id);
+
+    // Attach user info with resource data to request
+    req.user = {
+      ...user,
+      resourceUsage,
+      quotaCheck
+    };
+
     next();
   } catch (error) {
     console.error('Token verification error:', error);
     return res.status(403).json({ error: 'Invalid token' });
   }
+};
+
+// Middleware to check if user can create new Claude instances
+const checkClaudeInstanceQuota = (req, res, next) => {
+  const { quotaCheck } = req.user;
+
+  if (quotaCheck && quotaCheck.instances_exceeded) {
+    return res.status(429).json({
+      error: 'Claude instance quota exceeded',
+      quota: quotaCheck.quotas.instances,
+      current: quotaCheck.usage.instances
+    });
+  }
+
+  next();
+};
+
+// Middleware to check resource quotas for specific operations
+const checkResourceQuotas = (resourceType) => {
+  return (req, res, next) => {
+    const { quotaCheck } = req.user;
+
+    if (!quotaCheck) {
+      return next();
+    }
+
+    switch (resourceType) {
+      case 'cpu':
+        if (quotaCheck.cpu_exceeded) {
+          return res.status(429).json({
+            error: 'CPU quota exceeded',
+            quota: quotaCheck.quotas.cpu,
+            current: quotaCheck.usage.cpu
+          });
+        }
+        break;
+      case 'memory':
+        if (quotaCheck.memory_exceeded) {
+          return res.status(429).json({
+            error: 'Memory quota exceeded',
+            quota: quotaCheck.quotas.memory,
+            current: quotaCheck.usage.memory
+          });
+        }
+        break;
+      case 'storage':
+        if (quotaCheck.storage_exceeded) {
+          return res.status(429).json({
+            error: 'Storage quota exceeded',
+            quota: quotaCheck.quotas.storage,
+            current: quotaCheck.usage.storage
+          });
+        }
+        break;
+    }
+
+    next();
+  };
+};
+
+// Admin role check middleware
+const requireAdmin = (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+  next();
 };
 
 // Generate JWT token (never expires)
@@ -76,5 +152,8 @@ export {
   authenticateToken,
   generateToken,
   authenticateWebSocket,
+  checkClaudeInstanceQuota,
+  checkResourceQuotas,
+  requireAdmin,
   JWT_SECRET
 };

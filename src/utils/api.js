@@ -29,10 +29,20 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     }),
-    register: (username, password) => fetch('/api/auth/register', {
+    register: (username, password, email = null) => fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, password, email }),
+    }),
+    dashboard: () => authenticatedFetch('/api/auth/dashboard'),
+    users: () => authenticatedFetch('/api/auth/users'),
+    updateUserQuotas: (userId, quotas) => authenticatedFetch(`/api/auth/users/${userId}/quotas`, {
+      method: 'PUT',
+      body: JSON.stringify(quotas),
+    }),
+    updateUserRole: (userId, role) => authenticatedFetch(`/api/auth/users/${userId}/role`, {
+      method: 'PUT',
+      body: JSON.stringify({ role }),
     }),
     user: () => authenticatedFetch('/api/auth/user'),
     logout: () => authenticatedFetch('/api/auth/logout', { method: 'POST' }),

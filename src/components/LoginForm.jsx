@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { MessageSquare } from 'lucide-react';
+import RegisterForm from './RegisterForm';
 
 const LoginForm = () => {
+  const [showRegister, setShowRegister] = useState(false);
+
+  if (showRegister) {
+    return <RegisterForm onSwitchToLogin={() => setShowRegister(false)} />;
+  }
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -98,7 +104,13 @@ const LoginForm = () => {
 
           <div className="text-center">
             <p className="text-sm text-muted-foreground">
-              Enter your credentials to access Claude Code UI
+              Don't have an account?{' '}
+              <button
+                onClick={() => setShowRegister(true)}
+                className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+              >
+                Create one here
+              </button>
             </p>
           </div>
         </div>

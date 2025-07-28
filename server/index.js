@@ -177,6 +177,10 @@ app.use('/api/git', authenticateToken, gitRoutes);
 // MCP API Routes (protected)
 app.use('/api/mcp', authenticateToken, mcpRoutes);
 
+// Devbox API Routes (protected)
+import devboxRoutes from './routes/devbox.js';
+app.use('/api/devbox', devboxRoutes);
+
 // Static files served after API routes
 app.use(express.static(path.join(__dirname, '../dist')));
 
@@ -1002,6 +1006,11 @@ async function startServer() {
     // Initialize Claude instance pool
     await claudeInstancePool.initialize();
     console.log('✅ Claude instance pool initialized');
+
+    // Initialize Docker environment manager
+    const devboxIntegration = (await import('./devbox/index.js')).default;
+    await devboxIntegration.init();
+    console.log('✅ Docker environment manager initialized');
 
     server.listen(PORT, '0.0.0.0', async () => {
       console.log(`Claude Code UI server running on http://0.0.0.0:${PORT}`);

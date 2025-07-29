@@ -5,6 +5,7 @@ import PlatformSelector from './git-config/PlatformSelector';
 import CredentialManager from './git-config/CredentialManager';
 import SSHKeyGenerator from './git-config/SSHKeyGenerator';
 import RemoteRepositoryConfig from './git-config/RemoteRepositoryConfig';
+import { gitTheme, getButtonStyle, getAlertStyle } from '../styles/gitTheme';
 
 const GitConfigCenter = ({ selectedProject, onClose }) => {
   const [activeTab, setActiveTab] = useState('platforms');
@@ -183,7 +184,7 @@ const GitConfigCenter = ({ selectedProject, onClose }) => {
 
         {/* Status Messages */}
         {error && (
-          <div className="mx-6 mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className={`mx-6 mt-4 p-3 rounded ${getAlertStyle('error')}`}>
             {error}
             <button
               onClick={() => setError(null)}
@@ -194,7 +195,7 @@ const GitConfigCenter = ({ selectedProject, onClose }) => {
           </div>
         )}
         {success && (
-          <div className="mx-6 mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
+          <div className={`mx-6 mt-4 p-3 rounded ${getAlertStyle('success')}`}>
             {success}
             <button
               onClick={() => setSuccess(null)}
@@ -215,8 +216,8 @@ const GitConfigCenter = ({ selectedProject, onClose }) => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-2 px-4 py-3 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                    ? gitTheme.tab.active.full
+                    : gitTheme.tab.inactive.full
                 }`}
               >
                 <Icon size={16} />
@@ -309,7 +310,7 @@ const UserConfigTab = ({ gitUser, onUpdateUser, onError }) => {
               <button
                 type="button"
                 onClick={() => setIsEditing(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`flex items-center space-x-2 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${getButtonStyle('primary')}`}
               >
                 <Edit size={16} />
                 <span>编辑</span>

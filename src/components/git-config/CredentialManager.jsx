@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Check, X, Eye, EyeOff, Key, Lock, User } from 'lucide-react';
 import { authenticatedFetch } from '../../utils/api';
+import { gitTheme, getButtonStyle, getAlertStyle } from '../../styles/gitTheme';
 
 const CredentialManager = ({ credentials, platforms, onCredentialsChange, onError, onSuccess }) => {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -165,7 +166,7 @@ const CredentialManager = ({ credentials, platforms, onCredentialsChange, onErro
         <button
           onClick={handleAdd}
           disabled={platforms.length === 0}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed ${getButtonStyle('primary')}`}
         >
           <Plus size={16} />
           <span>添加凭据</span>
@@ -397,7 +398,7 @@ const CredentialManager = ({ credentials, platforms, onCredentialsChange, onErro
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                  className={`flex-1 flex items-center justify-center space-x-2 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 ${getButtonStyle('primary')}`}
                 >
                   {isSubmitting ? (
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>

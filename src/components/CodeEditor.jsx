@@ -262,13 +262,13 @@ function CodeEditor({ file, onClose, projectPath }) {
       // Mobile: native fullscreen, Desktop: modal with backdrop
       'md:bg-black/50 md:flex md:items-center md:justify-center md:p-4'
     } ${isFullscreen ? 'md:p-0' : ''}`}>
-      <div className={`bg-white shadow-2xl flex flex-col ${
+      <div className={`bg-white dark:bg-gray-800 shadow-2xl flex flex-col ${
         // Mobile: always fullscreen, Desktop: modal sizing
         'w-full h-full md:rounded-lg md:shadow-2xl' +
         (isFullscreen ? ' md:w-full md:h-full md:rounded-none' : ' md:w-full md:max-w-6xl md:h-[80vh] md:max-h-[80vh]')
       }`}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0 min-w-0">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0 min-w-0">
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center flex-shrink-0">
               <span className="text-white text-sm font-mono">
@@ -277,14 +277,14 @@ function CodeEditor({ file, onClose, projectPath }) {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 min-w-0">
-                <h3 className="font-medium text-gray-900 truncate">{file.name}</h3>
+                <h3 className="font-medium text-gray-900 dark:text-white truncate">{file.name}</h3>
                 {file.diffInfo && (
-                  <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded whitespace-nowrap">
+                  <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-2 py-1 rounded whitespace-nowrap">
                     📝 Has changes
                   </span>
                 )}
               </div>
-              <p className="text-sm text-gray-500 truncate">{file.path}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{file.path}</p>
             </div>
           </div>
           

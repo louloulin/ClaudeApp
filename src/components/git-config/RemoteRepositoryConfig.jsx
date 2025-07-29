@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Globe, Plus, Edit, Trash2, Check, X, ExternalLink, RefreshCw } from 'lucide-react';
+import { Plus, Edit, Trash2, Globe, CheckCircle, AlertCircle, X, RefreshCw } from 'lucide-react';
 import { authenticatedFetch } from '../../utils/api';
+import { gitTheme, getButtonStyle, getAlertStyle } from '../../styles/gitTheme';
 
 const RemoteRepositoryConfig = ({ selectedProject, platforms, credentials, onError, onSuccess }) => {
   const [remotes, setRemotes] = useState([]);
@@ -186,7 +187,7 @@ const RemoteRepositoryConfig = ({ selectedProject, platforms, credentials, onErr
           </button>
           <button
             onClick={() => setShowAddForm(true)}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors flex items-center space-x-2"
+            className={`px-4 py-2 rounded-md transition-colors flex items-center space-x-2 ${getButtonStyle('primary')}`}
           >
             <Plus size={16} />
             <span>添加远程仓库</span>
@@ -275,7 +276,7 @@ const RemoteRepositoryConfig = ({ selectedProject, platforms, credentials, onErr
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+                className={`px-4 py-2 rounded-md transition-colors ${getButtonStyle('primary')}`}
               >
                 {editingRemote ? '更新' : '添加'}
               </button>

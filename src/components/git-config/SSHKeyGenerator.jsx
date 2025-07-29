@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Key, Copy, Trash2, Check, X, Download, RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { authenticatedFetch } from '../../utils/api';
+import { gitTheme, getButtonStyle, getAlertStyle } from '../../styles/gitTheme';
 
 const SSHKeyGenerator = ({ sshKeys, onSSHKeysChange, onError, onSuccess }) => {
   const [showGenerateModal, setShowGenerateModal] = useState(false);
@@ -158,7 +159,7 @@ const SSHKeyGenerator = ({ sshKeys, onSSHKeysChange, onError, onSuccess }) => {
         </h3>
         <button
           onClick={handleGenerate}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className={`flex items-center space-x-2 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${getButtonStyle('primary')}`}
         >
           <Plus size={16} />
           <span>生成密钥</span>
@@ -400,7 +401,7 @@ const SSHKeyGenerator = ({ sshKeys, onSSHKeysChange, onError, onSuccess }) => {
                 <button
                   type="submit"
                   disabled={isGenerating}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className={`flex-1 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed ${getButtonStyle('primary')}`}
                 >
                   {isGenerating ? '生成中...' : '生成密钥'}
                 </button>

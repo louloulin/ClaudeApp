@@ -3,6 +3,7 @@ import { GitBranch, GitCommit, Plus, Minus, RefreshCw, Check, X, ChevronDown, Ch
 import { MicButton } from './MicButton.jsx';
 import { authenticatedFetch } from '../utils/api';
 import GitConfigCenter from './GitConfigCenter';
+import { gitTheme, getGitStatusStyle, getButtonStyle, getAlertStyle } from '../styles/gitTheme';
 
 function GitPanel({ selectedProject, isMobile }) {
   const [gitStatus, setGitStatus] = useState(null);
@@ -661,12 +662,7 @@ function GitPanel({ selectedProject, isMobile }) {
                 </button>
               )}
               <span 
-                className={`inline-flex items-center justify-center w-5 h-5 rounded text-xs font-bold border ${
-                  status === 'M' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800' :
-                  status === 'A' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 border-green-200 dark:border-green-800' :
-                  status === 'D' ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300 border-red-200 dark:border-red-800' :
-                  'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 border-gray-300 dark:border-gray-600'
-                }`}
+                className={`inline-flex items-center justify-center w-5 h-5 rounded text-xs font-bold border ${getGitStatusStyle(status)}`}
                 title={getStatusLabel(status)}
               >
                 {status}
@@ -856,7 +852,7 @@ function GitPanel({ selectedProject, isMobile }) {
                     <button
                       onClick={handleFetch}
                       disabled={isFetching}
-                      className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 flex items-center gap-1"
+                      className={`px-2 py-1 text-xs rounded disabled:opacity-50 flex items-center gap-1 ${getButtonStyle('primary')}`}
                       title={`Fetch from ${remoteStatus.remoteName}`}
                     >
                       <RefreshCw className={`w-3 h-3 ${isFetching ? 'animate-spin' : ''}`} />
@@ -961,7 +957,7 @@ function GitPanel({ selectedProject, isMobile }) {
                   <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                       <button
                         onClick={() => setIsCommitAreaCollapsed(false)}
-                        className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                        className={`w-full flex items-center justify-center gap-2 px-3 py-2 text-sm rounded-md ${getButtonStyle('primary')}`}
                       >
                         <GitCommit className="w-4 h-4" />
                         <span>Commit {selectedFiles.size} file{selectedFiles.size !== 1 ? 's' : ''}</span>
@@ -1031,7 +1027,7 @@ function GitPanel({ selectedProject, isMobile }) {
                           message: `Commit ${selectedFiles.size} file${selectedFiles.size !== 1 ? 's' : ''} with message: "${commitMessage.trim()}"?` 
                         })}
                         disabled={!commitMessage.trim() || selectedFiles.size === 0 || isCommitting}
-                        className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
+                        className={`px-3 py-1 text-sm rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1 ${getButtonStyle('primary')}`}
                       >
                         <Check className="w-3 h-3" />
                         <span>{isCommitting ? 'Committing...' : 'Commit'}</span>
@@ -1065,14 +1061,14 @@ function GitPanel({ selectedProject, isMobile }) {
                     ]);
                     setSelectedFiles(allFiles);
                   }}
-                  className={`text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 ${isMobile ? 'text-xs' : 'text-xs'}`}
+                  className={`${gitTheme.interactive.full} ${isMobile ? 'text-xs' : 'text-xs'}`}
                 >
                   {isMobile ? 'All' : 'Select All'}
                 </button>
                 <span className="text-gray-300 dark:text-gray-600">|</span>
                 <button
                   onClick={() => setSelectedFiles(new Set())}
-                  className={`text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 ${isMobile ? 'text-xs' : 'text-xs'}`}
+                  className={`${gitTheme.interactive.full} ${isMobile ? 'text-xs' : 'text-xs'}`}
                 >
                   {isMobile ? 'None' : 'Deselect All'}
                 </button>
@@ -1096,25 +1092,25 @@ function GitPanel({ selectedProject, isMobile }) {
                 <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 text-xs">
                   <div className={`${isMobile ? 'grid grid-cols-2 gap-3 justify-items-center' : 'flex justify-center gap-6'}`}>
                     <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center justify-center w-5 h-5 bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300 rounded border border-yellow-200 dark:border-yellow-800 font-bold text-xs">
+                      <span className={`inline-flex items-center justify-center w-5 h-5 rounded border font-bold text-xs ${getGitStatusStyle('M')}`}>
                         M
                       </span>
                       <span className="text-gray-600 dark:text-gray-400 italic">Modified</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center justify-center w-5 h-5 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 rounded border border-green-200 dark:border-green-800 font-bold text-xs">
+                      <span className={`inline-flex items-center justify-center w-5 h-5 rounded border font-bold text-xs ${getGitStatusStyle('A')}`}>
                         A
                       </span>
                       <span className="text-gray-600 dark:text-gray-400 italic">Added</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center justify-center w-5 h-5 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300 rounded border border-red-200 dark:border-red-800 font-bold text-xs">
+                      <span className={`inline-flex items-center justify-center w-5 h-5 rounded border font-bold text-xs ${getGitStatusStyle('D')}`}>
                         D
                       </span>
                       <span className="text-gray-600 dark:text-gray-400 italic">Deleted</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center justify-center w-5 h-5 bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 rounded border border-gray-300 dark:border-gray-600 font-bold text-xs">
+                      <span className={`inline-flex items-center justify-center w-5 h-5 rounded border font-bold text-xs ${getGitStatusStyle('U')}`}>
                         U
                       </span>
                       <span className="text-gray-600 dark:text-gray-400 italic">Untracked</span>
@@ -1217,7 +1213,7 @@ function GitPanel({ selectedProject, isMobile }) {
                 <button
                   onClick={createBranch}
                   disabled={!newBranchName.trim() || isCreatingBranch}
-                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                  className={`px-4 py-2 text-sm rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 ${getButtonStyle('primary')}`}
                 >
                   {isCreatingBranch ? (
                     <>
@@ -1273,17 +1269,17 @@ function GitPanel({ selectedProject, isMobile }) {
                 </button>
                 <button
                   onClick={confirmAndExecute}
-                  className={`px-4 py-2 text-sm text-white rounded-md ${
+                  className={`px-4 py-2 text-sm rounded-md flex items-center space-x-2 ${
                     (confirmAction.type === 'discard' || confirmAction.type === 'delete')
-                      ? 'bg-red-600 hover:bg-red-700' 
+                      ? getButtonStyle('danger')
                       : confirmAction.type === 'commit'
-                      ? 'bg-blue-600 hover:bg-blue-700'
+                      ? getButtonStyle('primary')
                       : confirmAction.type === 'pull'
-                      ? 'bg-green-600 hover:bg-green-700'
+                      ? getButtonStyle('success')
                       : confirmAction.type === 'publish'
-                      ? 'bg-purple-600 hover:bg-purple-700'
-                      : 'bg-orange-600 hover:bg-orange-700'
-                  } flex items-center space-x-2`}
+                      ? getButtonStyle('primary')
+                      : getButtonStyle('warning')
+                  }`}
                 >
                   {confirmAction.type === 'discard' ? (
                     <>

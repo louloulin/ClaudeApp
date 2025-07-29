@@ -36,6 +36,7 @@ import MCPServersManager from './components/MCPServersManager';
 import { useWebSocket } from './utils/websocket';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { ToastProvider } from './hooks/use-toast';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useVersionCheck } from './hooks/useVersionCheck';
 import { api } from './utils/api';
@@ -662,18 +663,20 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <ProtectedRoute>
-          <Router>
-            <Routes>
-              <Route path="/" element={<AppContent />} />
-              <Route path="/session/:sessionId" element={<AppContent />} />
-              <Route path="/admin" element={<AdminPanel />} />
-              <Route path="/agents" element={<CCAgentsManager />} />
-              <Route path="/usage" element={<UsageAnalytics />} />
-              <Route path="/mcp-servers" element={<MCPServersManager />} />
-            </Routes>
-          </Router>
-        </ProtectedRoute>
+        <ToastProvider>
+          <ProtectedRoute>
+            <Router>
+              <Routes>
+                <Route path="/" element={<AppContent />} />
+                <Route path="/session/:sessionId" element={<AppContent />} />
+                <Route path="/admin" element={<AdminPanel />} />
+                <Route path="/agents" element={<CCAgentsManager />} />
+                <Route path="/usage" element={<UsageAnalytics />} />
+                <Route path="/mcp-servers" element={<MCPServersManager />} />
+              </Routes>
+            </Router>
+          </ProtectedRoute>
+        </ToastProvider>
       </AuthProvider>
     </ThemeProvider>
   );

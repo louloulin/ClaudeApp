@@ -175,6 +175,10 @@ app.use('/api/auth', authRoutes);
 // Git API Routes (protected)
 app.use('/api/git', authenticateToken, gitRoutes);
 
+// Git Config API Routes (protected)
+import gitConfigRoutes from './routes/git-config.js';
+app.use('/api/git-config', authenticateToken, gitConfigRoutes);
+
 // MCP API Routes (protected)
 app.use('/api/mcp', authenticateToken, mcpRoutes);
 

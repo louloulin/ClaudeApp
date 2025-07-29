@@ -4,11 +4,11 @@ import path from 'path';
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'node',
+    environment: 'jsdom',
     testTimeout: 30000,
     hookTimeout: 30000,
-    setupFiles: ['./server/tests/setup.js'],
-    include: ['server/tests/**/*.test.js'],
+    setupFiles: ['./src/tests/setup.js'],
+    include: ['server/tests/**/*.test.js', 'src/tests/**/*.test.{js,jsx}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

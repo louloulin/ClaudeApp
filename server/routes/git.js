@@ -819,4 +819,142 @@ router.post('/delete-untracked', async (req, res) => {
   }
 });
 
+// Remote repository management
+router.get('/remotes', async (req, res) => {
+  const { project } = req.query;
+  
+  if (!project) {
+    return res.status(400).json({ error: 'Project name is required' });
+  }
+
+  try {
+    const projectPath = await getActualProjectPath(project);
+    await validateGitRepository(projectPath);
+
+    // Get list of remotes with URLs
+    const { stdout } = await execAsync('git remote -v', { cwd: projectPath });
+    
+    const remotes = [];
+    const remoteLines = stdout.trim().split('\n').filter(line => line.trim());
+    const remoteMap = new Map();
+    
+    remoteLines.forEach(line => {
+      const parts = line.trim().split(/\s+/);
+      if (parts.length >= 2) {
+        const name = parts[0];
+        const url = parts[1];
+        const type = parts[2] || '';
+        
+        if (!remoteMap.has(name)) {
+          remoteMap.set(name, {
+            name,
+            url,
+            platform: detectPlatform(url)
+          });
+        }
+      }
+    });
+    
+    res.json({ success: true, remotes: Array.from(remoteMap.values()) });
+  } catch (error) {
+    console.error('Git remotes error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/remotes', async (req, res) => {
+  const { project, name, url } = req.body;
+  
+  if (!project || !name || !url) {
+    return res.status(400).json({ error: 'Project name, remote name, and URL are required' });
+  }
+
+  try {
+    const projectPath = await getActualProjectPath(project);
+    await validateGitRepository(projectPath);
+
+    // Add remote
+    await execAsync(`git remote add "${name}" "${url}"`, { cwd: projectPath });
+    
+    res.json({ success: true, message: `Remote ${name} added successfully` });
+  } catch (error) {
+    console.error('Git add remote error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.put('/remotes/:remoteName', async (req, res) => {
+  const { remoteName } = req.params;
+  const { project, url } = req.body;
+  
+  if (!project || !url) {
+    return res.status(400).json({ error: 'Project name and URL are required' });
+  }
+
+  try {
+    const projectPath = await getActualProjectPath(project);
+    await validateGitRepository(projectPath);
+
+    // Update remote URL
+    await execAsync(`git remote set-url "${remoteName}" "${url}"`, { cwd: projectPath });
+    
+    res.json({ success: true, message: `Remote ${remoteName} updated successfully` });
+  } catch (error) {
+    console.error('Git update remote error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.delete('/remotes/:remoteName', async (req, res) => {
+  const { remoteName } = req.params;
+  const { project } = req.body;
+  
+  if (!project) {
+    return res.status(400).json({ error: 'Project name is required' });
+  }
+
+  try {
+    const projectPath = await getActualProjectPath(project);
+    await validateGitRepository(projectPath);
+
+    // Remove remote
+    await execAsync(`git remote remove "${remoteName}"`, { cwd: projectPath });
+    
+    res.json({ success: true, message: `Remote ${remoteName} removed successfully` });
+  } catch (error) {
+    console.error('Git remove remote error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+router.post('/remotes/test', async (req, res) => {
+  const { project, remoteName } = req.body;
+  
+  if (!project || !remoteName) {
+    return res.status(400).json({ error: 'Project name and remote name are required' });
+  }
+
+  try {
+    const projectPath = await getActualProjectPath(project);
+    await validateGitRepository(projectPath);
+
+    // Test remote connection by fetching
+    await execAsync(`git ls-remote "${remoteName}"`, { cwd: projectPath });
+    
+    res.json({ success: true, message: `Remote ${remoteName} connection successful` });
+  } catch (error) {
+    console.error('Git test remote error:', error);
+    res.status(500).json({ success: false, error: 'Remote connection failed: ' + error.message });
+  }
+});
+
+// Helper function to detect platform from URL
+function detectPlatform(url) {
+  if (url.includes('github.com')) return 'github';
+  if (url.includes('gitee.com')) return 'gitee';
+  if (url.includes('gitcode.net')) return 'gitcode';
+  if (url.includes('gitlab.com')) return 'gitlab';
+  return 'other';
+}
+
 export default router;

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { GitBranch, GitCommit, Plus, Minus, RefreshCw, Check, X, ChevronDown, ChevronRight, Info, History, FileText, Mic, MicOff, Sparkles, Download, RotateCcw, Trash2, AlertTriangle, Upload } from 'lucide-react';
+import { GitBranch, GitCommit, Plus, Minus, RefreshCw, Check, X, ChevronDown, ChevronRight, Info, History, FileText, Mic, MicOff, Sparkles, Download, RotateCcw, Trash2, AlertTriangle, Upload, Settings } from 'lucide-react';
 import { MicButton } from './MicButton.jsx';
 import { authenticatedFetch } from '../utils/api';
+import GitConfigCenter from './GitConfigCenter';
 
 function GitPanel({ selectedProject, isMobile }) {
   const [gitStatus, setGitStatus] = useState(null);
@@ -31,6 +32,7 @@ function GitPanel({ selectedProject, isMobile }) {
   const [isPublishing, setIsPublishing] = useState(false);
   const [isCommitAreaCollapsed, setIsCommitAreaCollapsed] = useState(isMobile); // Collapsed by default on mobile
   const [confirmAction, setConfirmAction] = useState(null); // { type: 'discard|commit|pull|push', file?: string, message?: string }
+  const [showGitConfig, setShowGitConfig] = useState(false);
   const textareaRef = useRef(null);
   const dropdownRef = useRef(null);
 
@@ -867,6 +869,15 @@ function GitPanel({ selectedProject, isMobile }) {
           )}
           
           <button
+            onClick={() => setShowGitConfig(true)}
+            className={`hover:bg-gray-100 dark:hover:bg-gray-800 rounded ${isMobile ? 'p-1' : 'p-1.5'} relative group`}
+            title="Git配置 - 平台管理、凭据管理、SSH密钥等"
+          >
+            <Settings className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400`} />
+            {/* 添加一个小的指示器，表明这里有更多功能 */}
+            <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full opacity-75 group-hover:opacity-100"></div>
+          </button>
+          <button
             onClick={() => {
               fetchGitStatus();
               fetchBranches();
@@ -888,10 +899,17 @@ function GitPanel({ selectedProject, isMobile }) {
           {gitStatus.details && (
             <p className="text-sm text-center leading-relaxed mb-6 max-w-md">{gitStatus.details}</p>
           )}
-          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 max-w-md">
-            <p className="text-sm text-blue-700 dark:text-blue-300 text-center">
-              <strong>Tip:</strong> Run <code className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded font-mono text-xs">git init</code> in your project directory to initialize git source control.
-            </p>
+          <div className="space-y-3 max-w-md">
+            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <p className="text-sm text-blue-700 dark:text-blue-300 text-center">
+                <strong>Tip:</strong> Run <code className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded font-mono text-xs">git init</code> in your project directory to initialize git source control.
+              </p>
+            </div>
+            <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+              <p className="text-sm text-green-700 dark:text-green-300 text-center">
+                <strong>💡 Git配置:</strong> 点击右上角的 <Settings className="inline w-3 h-3 mx-1" /> 设置按钮可以配置GitHub、Gitee等平台管理、凭据管理和SSH密钥。
+              </p>
+            </div>
           </div>
         </div>
       ) : (
@@ -1119,7 +1137,13 @@ function GitPanel({ selectedProject, isMobile }) {
           ) : !gitStatus || (!gitStatus.modified?.length && !gitStatus.added?.length && !gitStatus.deleted?.length && !gitStatus.untracked?.length) ? (
             <div className="flex flex-col items-center justify-center h-32 text-gray-500 dark:text-gray-400">
               <GitCommit className="w-12 h-12 mb-2 opacity-50" />
-              <p className="text-sm">No changes detected</p>
+              <p className="text-sm mb-4">No changes detected</p>
+              {/* Git配置提示 */}
+              <div className="mx-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 max-w-sm">
+                <p className="text-xs text-blue-700 dark:text-blue-300 text-center">
+                  💡 需要配置远程仓库？点击右上角的 <Settings className="inline w-3 h-3 mx-1" /> 按钮配置GitHub、Gitee等平台
+                </p>
+              </div>
             </div>
           ) : (
             <div className={isMobile ? 'pb-4' : ''}>
@@ -1297,6 +1321,14 @@ function GitPanel({ selectedProject, isMobile }) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Git Config Center Modal */}
+      {showGitConfig && (
+        <GitConfigCenter
+          selectedProject={selectedProject}
+          onClose={() => setShowGitConfig(false)}
+        />
       )}
     </div>
   );

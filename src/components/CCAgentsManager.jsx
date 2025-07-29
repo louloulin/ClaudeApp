@@ -53,7 +53,7 @@ const CCAgentsManager = () => {
     try {
       const response = await fetch('/api/agents', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       if (response.ok) {
@@ -75,7 +75,7 @@ const CCAgentsManager = () => {
     try {
       const response = await fetch('/api/agents/executions', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       if (response.ok) {
@@ -93,7 +93,7 @@ const CCAgentsManager = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify(newAgent)
       });
@@ -134,7 +134,7 @@ const CCAgentsManager = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify(selectedAgent)
       });
@@ -166,7 +166,7 @@ const CCAgentsManager = () => {
       const response = await fetch(`/api/agents/${agentId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
 
@@ -194,7 +194,7 @@ const CCAgentsManager = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify({ task, project_path: '/tmp' })
       });

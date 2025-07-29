@@ -20,7 +20,7 @@ const TagManager = ({ projectName, onClose }) => {
       setLoading(true);
       const response = await fetch(`/api/git-advanced/tags?project=${encodeURIComponent(projectName)}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       
@@ -49,7 +49,7 @@ const TagManager = ({ projectName, onClose }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify({
           project: projectName,
@@ -86,7 +86,7 @@ const TagManager = ({ projectName, onClose }) => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify({ project: projectName })
       });
@@ -117,7 +117,7 @@ const TagManager = ({ projectName, onClose }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify({ 
           project: projectName,
@@ -165,7 +165,7 @@ const TagManager = ({ projectName, onClose }) => {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
           },
           body: JSON.stringify({ project: projectName })
         })

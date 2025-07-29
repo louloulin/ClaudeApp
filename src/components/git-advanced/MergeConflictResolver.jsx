@@ -22,7 +22,7 @@ const MergeConflictResolver = ({ projectName, onClose, onResolved }) => {
       setLoading(true);
       const response = await fetch(`/api/git-advanced/conflicts?project=${encodeURIComponent(projectName)}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       
@@ -44,7 +44,7 @@ const MergeConflictResolver = ({ projectName, onClose, onResolved }) => {
     try {
       const response = await fetch(`/api/git-advanced/conflicts/${encodeURIComponent(filePath)}?project=${encodeURIComponent(projectName)}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       
@@ -68,7 +68,7 @@ const MergeConflictResolver = ({ projectName, onClose, onResolved }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify({
           project: projectName,
@@ -101,7 +101,7 @@ const MergeConflictResolver = ({ projectName, onClose, onResolved }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify({ project: projectName })
       });
@@ -126,7 +126,7 @@ const MergeConflictResolver = ({ projectName, onClose, onResolved }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify({ 
           project: projectName,

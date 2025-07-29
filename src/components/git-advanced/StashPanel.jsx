@@ -23,7 +23,7 @@ const StashPanel = ({ projectName, onClose }) => {
       setLoading(true);
       const response = await fetch(`/api/git-advanced/stash?project=${encodeURIComponent(projectName)}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       
@@ -47,7 +47,7 @@ const StashPanel = ({ projectName, onClose }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify({
           project: projectName,
@@ -79,7 +79,7 @@ const StashPanel = ({ projectName, onClose }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify({ project: projectName })
       });
@@ -104,7 +104,7 @@ const StashPanel = ({ projectName, onClose }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify({ project: projectName })
       });
@@ -133,7 +133,7 @@ const StashPanel = ({ projectName, onClose }) => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify({ project: projectName })
       });
@@ -162,7 +162,7 @@ const StashPanel = ({ projectName, onClose }) => {
       
       const response = await fetch(`/api/git-advanced/stash/${stash.index}/show?project=${encodeURIComponent(projectName)}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       

@@ -55,7 +55,7 @@ const UsageAnalytics = () => {
     try {
       const response = await fetch('/api/usage/overview', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       if (response.ok) {
@@ -77,7 +77,7 @@ const UsageAnalytics = () => {
       
       const response = await fetch(`/api/usage/records?${params}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       if (response.ok) {
@@ -97,7 +97,7 @@ const UsageAnalytics = () => {
       
       const response = await fetch(`/api/usage/cost-analysis?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       if (response.ok) {
@@ -113,7 +113,7 @@ const UsageAnalytics = () => {
     try {
       const response = await fetch('/api/usage/agents', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       if (response.ok) {
@@ -129,7 +129,7 @@ const UsageAnalytics = () => {
     try {
       const response = await fetch('/api/usage/users', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       if (response.ok) {

@@ -47,7 +47,7 @@ const MCPServersManager = () => {
     try {
       const response = await fetch('/api/mcp-servers', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       if (response.ok) {
@@ -69,7 +69,7 @@ const MCPServersManager = () => {
     try {
       const response = await fetch('/api/mcp-servers/tool-usage', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         }
       });
       if (response.ok) {
@@ -85,8 +85,8 @@ const MCPServersManager = () => {
     try {
       const response = await fetch(`/api/mcp-servers/${serverId}/tools`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+            'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
+          }
       });
       if (response.ok) {
         const data = await response.json();
@@ -113,7 +113,7 @@ const MCPServersManager = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
         },
         body: JSON.stringify(serverData)
       });
@@ -158,9 +158,9 @@ const MCPServersManager = () => {
       const response = await fetch(`/api/mcp-servers/${selectedServer.id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
+          },
         body: JSON.stringify(serverData)
       });
 
@@ -191,8 +191,8 @@ const MCPServersManager = () => {
       const response = await fetch(`/api/mcp-servers/${serverId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+            'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
+          }
       });
 
       if (response.ok) {
@@ -218,8 +218,8 @@ const MCPServersManager = () => {
       const response = await fetch(`/api/mcp-servers/${serverId}/start`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+            'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
+          }
       });
 
       if (response.ok) {
@@ -245,8 +245,8 @@ const MCPServersManager = () => {
       const response = await fetch(`/api/mcp-servers/${serverId}/stop`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+            'Authorization': `Bearer ${localStorage.getItem('auth-token')}`
+          }
       });
 
       if (response.ok) {

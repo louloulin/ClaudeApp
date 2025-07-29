@@ -810,55 +810,63 @@ function ToolsSettings({ isOpen, onClose }) {
 
             {/* MCP Server Management */}
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Server className="w-5 h-5 text-purple-500" />
-                <h3 className="text-lg font-medium text-foreground">
-                  MCP Servers
-                </h3>
-              </div>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  Model Context Protocol servers provide additional tools and data sources to Claude
-                </p>
-              </div>
-              
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Server className="w-5 h-5 text-purple-500" />
+                  <div>
+                    <h3 className="text-lg font-medium text-foreground">
+                      MCP Servers
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Model Context Protocol servers provide additional tools and data sources
+                    </p>
+                  </div>
+                </div>
                 <Button
                   onClick={() => openMcpForm()}
                   className="bg-purple-600 hover:bg-purple-700 text-white"
                   size="sm"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Add MCP Server
+                  Add Server
                 </Button>
               </div>
 
               {/* MCP Servers List */}
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {mcpServers.map(server => (
-                  <div key={server.id} className="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div key={server.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
+                        <div className="flex items-center gap-2 mb-3">
                           {getTransportIcon(server.type)}
-                          <span className="font-medium text-foreground">{server.name}</span>
-                          <Badge variant="outline" className="text-xs">
-                            {server.type}
+                          <span className="font-semibold text-foreground">{server.name}</span>
+                          <Badge variant="outline" className="text-xs bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700">
+                            {server.type.toUpperCase()}
                           </Badge>
-                          <Badge variant="outline" className="text-xs">
+                          <Badge variant="outline" className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700">
                             {server.scope}
                           </Badge>
                         </div>
                         
-                        <div className="text-sm text-muted-foreground space-y-1">
+                        <div className="text-sm text-muted-foreground space-y-2">
                           {server.type === 'stdio' && server.config.command && (
-                            <div>Command: <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">{server.config.command}</code></div>
+                            <div className="flex items-start gap-2">
+                              <span className="font-medium min-w-[60px]">Command:</span>
+                              <code className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs font-mono break-all">{server.config.command}</code>
+                            </div>
                           )}
                           {(server.type === 'sse' || server.type === 'http') && server.config.url && (
-                            <div>URL: <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">{server.config.url}</code></div>
+                            <div className="flex items-start gap-2">
+                              <span className="font-medium min-w-[60px]">URL:</span>
+                              <code className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs font-mono break-all">{server.config.url}</code>
+                            </div>
                           )}
                           {server.config.args && server.config.args.length > 0 && (
-                            <div>Args: <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">{server.config.args.join(' ')}</code></div>
+                            <div className="flex items-start gap-2">
+                              <span className="font-medium min-w-[60px]">Args:</span>
+                              <code className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs font-mono">{server.config.args.join(' ')}</code>
+                            </div>
                           )}
                         </div>
 
@@ -1001,8 +1009,24 @@ function ToolsSettings({ isOpen, onClose }) {
                   </div>
                 ))}
                 {mcpServers.length === 0 && (
-                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                    No MCP servers configured
+                  <div className="text-center py-12 px-4">
+                    <div className="max-w-sm mx-auto">
+                      <Server className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+                      <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                        No MCP Servers
+                      </h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                        Add MCP servers to extend Claude's capabilities with additional tools and data sources.
+                      </p>
+                      <Button
+                        onClick={() => openMcpForm()}
+                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                        size="sm"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Your First Server
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -1014,7 +1038,7 @@ function ToolsSettings({ isOpen, onClose }) {
                 <div className="bg-background border border-border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                   <div className="flex items-center justify-between p-4 border-b border-border">
                     <h3 className="text-lg font-medium text-foreground">
-                      {editingMcpServer ? 'Edit MCP Server' : 'Add MCP Server'}
+                      {editingMcpServer ? 'Edit Server' : 'Add MCP Server'}
                     </h3>
                     <Button variant="ghost" size="sm" onClick={resetMcpForm}>
                       <X className="w-4 h-4" />

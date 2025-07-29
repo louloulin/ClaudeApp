@@ -8,7 +8,7 @@ export default defineConfig({
     testTimeout: 30000,
     hookTimeout: 30000,
     setupFiles: ['./src/tests/setup.js'],
-    include: ['server/tests/**/*.test.js', 'src/tests/**/*.test.{js,jsx}'],
+    include: ['server/tests/**/*.test.js', 'src/tests/**/*.test.{js,jsx,ts,tsx}'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

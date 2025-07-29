@@ -189,6 +189,18 @@ app.use('/api/admin', authenticateToken, adminRoutes);
 import devboxRoutes from './routes/devbox.js';
 app.use('/api/devbox', devboxRoutes);
 
+// CC Agents API Routes (protected)
+import agentsRoutes from './routes/agents.js';
+app.use('/api/agents', authenticateToken, agentsRoutes);
+
+// Usage Analytics API Routes (protected)
+import usageRoutes from './routes/usage.js';
+app.use('/api/usage', authenticateToken, usageRoutes);
+
+// MCP Servers API Routes (protected)
+import mcpServersRoutes from './routes/mcp-servers.js';
+app.use('/api/mcp-servers', authenticateToken, mcpServersRoutes);
+
 // Static files served after API routes
 app.use(express.static(path.join(__dirname, '../dist')));
 

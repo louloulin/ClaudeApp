@@ -88,4 +88,32 @@ export const api = {
       body: formData,
       headers: {}, // Let browser set Content-Type for FormData
     }),
+
+  // CC Agents API
+  listAgents: () => authenticatedFetch('/api/agents'),
+  getAgent: (agentId) => authenticatedFetch(`/api/agents/${agentId}`),
+  createAgent: (agentData) => authenticatedFetch('/api/agents', {
+    method: 'POST',
+    body: JSON.stringify(agentData),
+  }),
+  updateAgent: (agentId, agentData) => authenticatedFetch(`/api/agents/${agentId}`, {
+    method: 'PUT',
+    body: JSON.stringify(agentData),
+  }),
+  deleteAgent: (agentId) => authenticatedFetch(`/api/agents/${agentId}`, {
+    method: 'DELETE',
+  }),
+  executeAgent: (agentId, projectPath, task, model) => authenticatedFetch(`/api/agents/${agentId}/execute`, {
+    method: 'POST',
+    body: JSON.stringify({ project_path: projectPath, task, model }),
+  }),
+  listAgentRuns: (agentId = null) => {
+    const url = agentId ? `/api/agents/${agentId}/executions` : '/api/agents/executions';
+    return authenticatedFetch(url);
+  },
+  getAgentRun: (runId) => authenticatedFetch(`/api/agents/executions/${runId}`),
+  getAgentRunWithRealTimeMetrics: (runId) => authenticatedFetch(`/api/agents/executions/${runId}`),
+  killAgentSession: (runId) => authenticatedFetch(`/api/agents/executions/${runId}/cancel`, {
+    method: 'POST',
+  }),
 };

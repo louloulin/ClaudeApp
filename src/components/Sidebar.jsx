@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-import { FolderOpen, Folder, Plus, MessageSquare, Clock, ChevronDown, ChevronRight, Edit3, Check, X, Trash2, Settings, FolderPlus, RefreshCw, Sparkles, Edit2, Star, Search, Shield } from 'lucide-react';
+import { FolderOpen, Folder, Plus, MessageSquare, Clock, ChevronDown, ChevronRight, Edit3, Check, X, Trash2, Settings, FolderPlus, RefreshCw, Sparkles, Edit2, Star, Search, Shield, Bot, BarChart3, Server } from 'lucide-react';
 import { cn } from '../lib/utils';
 import ClaudeLogo from './ClaudeLogo';
 import { api } from '../utils/api';
@@ -433,6 +433,33 @@ function Sidebar({
             </div>
           </div>
           <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-9 w-9 px-0 hover:bg-accent transition-colors duration-200 group"
+              onClick={() => navigate('/agents')}
+              title="CC Agents"
+            >
+              <Bot className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-9 w-9 px-0 hover:bg-accent transition-colors duration-200 group"
+              onClick={() => navigate('/usage')}
+              title="Usage Analytics"
+            >
+              <BarChart3 className="w-4 h-4 text-green-600 dark:text-green-400" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-9 w-9 px-0 hover:bg-accent transition-colors duration-200 group"
+              onClick={() => navigate('/mcp-servers')}
+              title="MCP Servers"
+            >
+              <Server className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+            </Button>
             {user?.role === 'admin' && (
               <Button
                 variant="ghost"
@@ -486,6 +513,27 @@ function Sidebar({
               </div>
             </div>
             <div className="flex gap-2">
+              <button
+                className="w-8 h-8 rounded-md bg-blue-500/10 border border-blue-200 dark:border-blue-800 flex items-center justify-center active:scale-95 transition-all duration-150"
+                onClick={() => navigate('/agents')}
+                title="CC Agents"
+              >
+                <Bot className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </button>
+              <button
+                className="w-8 h-8 rounded-md bg-green-500/10 border border-green-200 dark:border-green-800 flex items-center justify-center active:scale-95 transition-all duration-150"
+                onClick={() => navigate('/usage')}
+                title="Usage Analytics"
+              >
+                <BarChart3 className="w-4 h-4 text-green-600 dark:text-green-400" />
+              </button>
+              <button
+                className="w-8 h-8 rounded-md bg-purple-500/10 border border-purple-200 dark:border-purple-800 flex items-center justify-center active:scale-95 transition-all duration-150"
+                onClick={() => navigate('/mcp-servers')}
+                title="MCP Servers"
+              >
+                <Server className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+              </button>
               {user?.role === 'admin' && (
                 <button
                   className="w-8 h-8 rounded-md bg-orange-500/10 border border-orange-200 dark:border-orange-800 flex items-center justify-center active:scale-95 transition-all duration-150"

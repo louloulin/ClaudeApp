@@ -29,6 +29,9 @@ import NetworkStatus, { OfflineBanner, ServiceWorkerUpdate } from './components/
 import DesktopInstallPrompt from './components/DesktopInstallPrompt';
 import DesktopEnhancements from './components/DesktopEnhancements';
 import AdminPanel from './components/AdminPanel';
+import CCAgentsManager from './components/CCAgentsManager';
+import UsageAnalytics from './components/UsageAnalytics';
+import MCPServersManager from './components/MCPServersManager';
 
 import { useWebSocket } from './utils/websocket';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -665,6 +668,9 @@ function App() {
               <Route path="/" element={<AppContent />} />
               <Route path="/session/:sessionId" element={<AppContent />} />
               <Route path="/admin" element={<AdminPanel />} />
+              <Route path="/agents" element={<CCAgentsManager />} />
+              <Route path="/usage" element={<UsageAnalytics />} />
+              <Route path="/mcp-servers" element={<MCPServersManager />} />
             </Routes>
           </Router>
         </ProtectedRoute>
